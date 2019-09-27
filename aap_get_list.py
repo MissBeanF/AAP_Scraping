@@ -57,6 +57,7 @@ if __name__ == '__main__':
     make_list = []
     model_list = []
     year_text_list = []
+    start_num = 1
     if len(sys.argv) == 1:          
         print("Please input the filename")
         print("eg: py aap_bot_real.py input.csv")
@@ -65,6 +66,15 @@ if __name__ == '__main__':
         input_filename = sys.argv[1] 
     else:
         print("Please input correct filename")
+    
+    if len(sys.argv) == 2:
+        print("please input last year number in the console")
+        exit(1)
+    elif (sys.argv[2]).isdigit():
+        start_num = sys.argv[2]
+    else:
+        print("input number")
+
     with open(input_filename, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
@@ -105,17 +115,17 @@ if __name__ == '__main__':
         print("year_list_text: ", year_text_list)
         len_year = len(year_list)
 
-        for m in range(len_year):
-            if m%3 == 1:
+        for m in range(int(start_num), len_year):
+            if m >= 2:
                 driver.close()
                 driver = webdriver.Chrome("drivers/chromedriver.exe")
                 driver.get(target_url)
-                time.sleep(10)
+                time.sleep(8)
 
                 # iframe select
                 iframe = driver.find_element_by_tag_name('iframe')
                 driver.switch_to_frame(iframe)
-                time.sleep(5) 
+                time.sleep(3) 
 
                 # click make list
                 driver.find_element_by_id(make_col_id).click()
@@ -130,6 +140,7 @@ if __name__ == '__main__':
                         break
                 year_list = driver.find_elements_by_xpath('//*[@id="' + year_col_id + '"]/tbody/tr')
             print("year: ", year_list[m].text)
+            print("year_number: ", m)
             if "ALL" in year_list[m].text:
                 continue
             try:
@@ -138,7 +149,7 @@ if __name__ == '__main__':
                 check_close_button()
                 time.sleep(2)
                 year_list[m].click()
-            time.sleep(3)
+            time.sleep(2)
 
             # click series list
             series_list = driver.find_elements_by_xpath('//*[@id="' + series_col_id + '"]/tbody/tr')
@@ -149,7 +160,7 @@ if __name__ == '__main__':
                     i.click()
                 except:
                     check_close_button()
-                    time.sleep(2)
+                    time.sleep(1.5)
                     i.click()
                 
                 time.sleep(4)
